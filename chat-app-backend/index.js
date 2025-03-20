@@ -7,6 +7,7 @@ const connectDB = require("./config/db");
 
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const uploadRoutes = require("./routes/uploadRoutes");
 
 
 const app = express();
@@ -19,9 +20,13 @@ app.use(cookieParser());
 // Connect to Database
 connectDB();
 
+// Serve static files
+app.use("/uploads", express.static("uploads"));
+
 
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/upload", uploadRoutes);
 
 
 // Test route
