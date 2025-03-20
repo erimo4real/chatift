@@ -1,8 +1,15 @@
 const mongoose = require("mongoose");
 
+const mongoURI = process.env.MONGO_URI;
+if (!mongoURI) {
+  console.error("Error: MONGO_URI is not defined in .env file");
+  process.exit(1);
+}
+
+
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
+    const conn = await mongoose.connect(mongoURI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });

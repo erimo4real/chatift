@@ -1,2 +1,0 @@
-MONGO_URI="mongodb://127.0.0.1/chatify-app"
-JWT_SECRET="0987654321qazxswedcvfrtgbnhyujmkilop"
