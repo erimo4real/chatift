@@ -51,14 +51,27 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
 
+  // Join a chat room
+  socket.on("joinRoom", (room) => {
+    socket.join(room);
+    console.log(`User joined room: ${room}`);
+  });
+
+  // Handle public messages
   socket.on("sendMessage", (data) => {
-    io.emit("receiveMessage", data); // Broadcast message to all users
+    io.to(data.chatRoom).emit("receiveMessage", data);
+  });
+
+  // Handle private messages
+  socket.on("sendPrivateMessage", ({ sender, receiver, content }) => {
+    io.to(receiver).emit("receivePrivateMessage", { sender, content });
   });
 
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });
 });
+
 
 // Start server (Only one `listen` function)
 server.listen(PORT, () => {
