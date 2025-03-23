@@ -47,6 +47,8 @@ const io = new Server(server, {
   },
 });
 
+const onlineUsers = {}; // Store online users
+
 // Socket.IO Connection
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
@@ -67,7 +69,32 @@ io.on("connection", (socket) => {
     io.to(receiver).emit("receivePrivateMessage", { sender, content });
   });
 
+   // Handle user online status
+   socket.on("userOnline", (userId) => {
+    onlineUsers[userId] = socket.id;
+    io.emit("onlineUsers", Object.keys(onlineUsers)); // Broadcast to all users
+  });
+
+  // Handle user typing status
+  socket.on("typing", ({ chatRoom, user }) => {
+    socket.to(chatRoom).emit("userTyping", user);
+  });
+
+  socket.on("stopTyping", ({ chatRoom, user }) => {
+    socket.to(chatRoom).emit("userStoppedTyping", user);
+  });
+
+   // Handle message read status
+   socket.on("markAsRead", ({ senderId, receiverId }) => {
+    io.to(senderId).emit("messageRead", { senderId, receiverId });
+  });
+
   socket.on("disconnect", () => {
+    const userId = Object.keys(onlineUsers).find((key) => onlineUsers[key] === socket.id);
+  if (userId) {
+    delete onlineUsers[userId];
+    io.emit("onlineUsers", Object.keys(onlineUsers)); // Notify all users
+  }
     console.log("User disconnected:", socket.id);
   });
 });

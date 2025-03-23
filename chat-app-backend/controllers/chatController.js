@@ -57,4 +57,22 @@ const getPrivateMessages = async (req, res) => {
   }
 };
 
-module.exports = { sendMessage, getChatRoomMessages, getPrivateMessages };
+// Mark messages as read
+const markMessagesAsRead = async (req, res) => {
+  try {
+    const { senderId } = req.body; // Messages from this sender will be marked as read
+    const receiverId = req.user.id; // The current user is the receiver
+
+    await Message.updateMany(
+      { sender: senderId, receiver: receiverId, isRead: false },
+      { isRead: true }
+    );
+
+    res.json({ message: "Messages marked as read" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+module.exports = { sendMessage, getChatRoomMessages, getPrivateMessages , markMessagesAsRead };

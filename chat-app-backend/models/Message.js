@@ -6,6 +6,7 @@ const MessageSchema = new mongoose.Schema(
     receiver: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Only for private messages
     chatRoom: { type: String }, // For public chat rooms
     content: { type: String, required: true },
+    isRead: { type: Boolean, default: false }, // Track if message is read
   },
   { timestamps: true }
 );
